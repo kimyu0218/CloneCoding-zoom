@@ -7,7 +7,14 @@ html(lang="en")
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
     body
         header 
-            h1 Zoom Clone using WebRTC and Websockets
+            h1 Zoom Clone
+            h3 using WebRTC and Websockets
         main 
-            h2 Welcome to Zoom Clone
+            form#nick
+                input(type="text", placeholder="write a nickname", required)
+                button Save
+            ul
+            form#message
+                input(type="text", placeholder="write a message", required)
+                button Send
         script(src="/javascripts/app.js")
