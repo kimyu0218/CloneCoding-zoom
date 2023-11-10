@@ -17,7 +17,11 @@ app.get("/", (req, res) => res.render("home"));
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const sockets = [];
+
 wss.on("connection", (socket) => {
+  sockets.push(socket);
+  socket["nickname"] = "anonymous";
   console.log("Connected to Browser");
 
   socket.on("close", () => {
@@ -25,10 +29,18 @@ wss.on("connection", (socket) => {
   });
 
   socket.on("message", (message) => {
-    console.log("From Browser:", message.toString());
+    const parsed = JSON.parse(message.toString());
+    switch (parsed.type) {
+      case "chat":
+        sockets.forEach((sock) =>
+          sock.send(`[${socket.nickname}] ${parsed.payload}`)
+        );
+        break;
+      case "nick":
+        socket["nickname"] = parsed.payload;
+        break;
+    }
   });
-
-  socket.send("Hello, this is Websocket Server!");
 });
 
 server.listen(process.env.port, () =>
