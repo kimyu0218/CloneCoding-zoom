@@ -1,5 +1,7 @@
 import express from "express";
 import path from "path";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
@@ -10,4 +12,6 @@ app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => res.render("home"));
 
-app.listen(3000, () => console.log("Example app listening on port 3000"));
+app.listen(process.env.port, () =>
+  console.log(`Example app listening on port ${process.env.port}`)
+);
