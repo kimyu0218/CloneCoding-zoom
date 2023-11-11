@@ -5,25 +5,23 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Document
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
-    body
-        header 
+    body 
+        header
             h1 Zoom Clone
             h3 using WebRTC and Websockets
-        main
-            div#welcome
+        main 
+            div#welcome 
                 form
-                    input(type="text", placeholder="room name", required)
-                    button Enter Room
-                h4 Open Rooms: 
-                ul 
-            div#chat
-                h3
-                ul
-                form#nick
-                    input(type="text", placeholder="nickname", required)
-                    button Save
-                form#msg
-                    input(type="text", placeholder="message", required)
-                    button Send
+                    input(type="text", placeholder="room name", required) 
+                    button Enter room
+            div#call
+                div#myStream
+                    div(style="display: flex; gap: 5rem")
+                        video#myFace(autoplay, playsinline, width="400" height="400")
+                        video#peerFace(autoplay, playsinline, width="400" height="400")
+                    select#cameras
+                    div(style="display: flex; gap: 2rem")
+                        button#mute Mute
+                        button#camera Turn Camera Off
         script(src="/socket.io/socket.io.js")
         script(src="/javascripts/app.js")
