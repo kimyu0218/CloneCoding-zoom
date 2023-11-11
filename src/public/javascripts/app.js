@@ -20,9 +20,9 @@ async function getCameras() {
     const currentCamera = myStream.getVideoTracks()[0];
     cameras.forEach((camera) => {
       const option = document.createElement("option");
-      option.value = camera.devicdeId;
+      option.value = camera.deviceId;
       option.innerText = camera.label;
-      if (currentCamera.label === camera.lebel) {
+      if (currentCamera.label === camera.label) {
         option.selected = true;
       }
       camerasSelect.appendChild(option);
