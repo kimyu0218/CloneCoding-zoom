@@ -1,5 +1,5 @@
 import http from "http";
-import WebSocket from "ws";
+import SocketIO from "socket.io";
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
@@ -15,35 +15,33 @@ app.set("views", path.join(__dirname, "views"));
 app.get("/", (req, res) => res.render("home"));
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = SocketIO(server);
 
-const sockets = [];
-
-wss.on("connection", (socket) => {
-  sockets.push(socket);
+io.on("connection", (socket) => {
   socket["nick"] = "anonymous";
-  console.log("Connected to Browser");
 
-  socket.on("close", () => {
-    console.log("Disconnected from Browser");
+  io.socketsJoin("announcement");
+
+  socket.onAny((event) => {
+    console.log(`Socket Event: ${event}`);
   });
 
-  socket.on("chat", (payload) => {
-    sockets.forEach((sock) => {
-      if (socket !== sock) {
-        sock.send(`[${socket.nick}] ${payload}`);
-      }
-    });
+  socket.on("enter_room", (room, done) => {
+    socket.join(room);
+    done();
+    socket.to(room).emit("welcome", socket.nick);
   });
 
-  socket.on("nick", (payload) => {
-    socket["nick"] = payload;
+  socket.on("disconnecting", () => {
+    socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nick));
   });
 
-  socket.on("message", (message) => {
-    const parsed = JSON.parse(message.toString());
-    socket.emit(parsed.type, parsed.payload);
+  socket.on("chat", (msg, room, done) => {
+    socket.to(room).emit("chat", `[${socket.nick}]: ${msg}`);
+    done();
   });
+
+  socket.on("nick", (nickname) => (socket["nick"] = nickname));
 });
 
 server.listen(process.env.port, () =>
